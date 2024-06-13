@@ -1,0 +1,81 @@
+#include <stdio.h>
+
+struct job {
+  int num;    // 작업
+  int time;   // 마감 시간
+  int reward; // 보상
+  int use;    // 사용했는가
+};
+
+// 최대 보상 작업을 찾는 함수
+int findMax(struct job jobs[], int size, int time) { // size = 작업 수  time = 마감 시간
+  int maxReward = 0;
+  int maxRewardJob = -1;
+  for (int j = 0; j < size; j++) {
+    if (jobs[j].use == 0 && jobs[j].time >= time) {
+      if (jobs[j].reward > maxReward) {
+        maxReward = jobs[j].reward;
+        maxRewardJob = j;
+      }
+    }
+  }
+  return maxRewardJob;
+}
+
+int main(void) {
+
+  struct job jobs[7];
+
+  jobs[0].num = 1;
+  jobs[0].time = 3;
+  jobs[0].reward = 40;
+  jobs[0].use = 0;
+
+  jobs[1].num = 2;
+  jobs[1].time = 1;
+  jobs[1].reward = 35;
+  jobs[1].use = 0;
+
+  jobs[2].num = 3;
+  jobs[2].time = 1;
+  jobs[2].reward = 30;
+  jobs[2].use = 0;
+
+  jobs[3].num = 4;
+  jobs[3].time = 3;
+  jobs[3].reward = 25;
+  jobs[3].use = 0;
+
+  jobs[4].num = 5;
+  jobs[4].time = 1;
+  jobs[4].reward = 20;
+  jobs[4].use = 0;
+
+  jobs[5].num = 6;
+  jobs[5].time = 3;
+  jobs[5].reward = 15;
+  jobs[5].use = 0;
+
+  jobs[6].num = 7;
+  jobs[6].time = 2;
+  jobs[6].reward = 10;
+  jobs[6].use = 0;
+
+  int selectedJobs[3] = {}; // 선택된 작업
+
+  int time = 3;
+
+  for (int i = 0; i < time; i++) {
+    int maxRewardJob = findMax(jobs, 7, time - i);
+    if (maxRewardJob != -1) {
+      selectedJobs[i] = jobs[maxRewardJob].num;
+      jobs[maxRewardJob].use = 1;
+    }
+  }
+
+  // 결과 출력
+  for (int i = 2; i >= 0; i--) {
+    printf("%d ", selectedJobs[i]);
+  }
+  return 0;
+}
