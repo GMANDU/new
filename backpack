@@ -1,0 +1,70 @@
+#include <stdio.h>
+
+#define MAX_ITEMS 100
+
+// 물건의 가치와 무게를 나타내는 구조체
+struct Item {
+    int value;
+    int weight;
+};
+
+// 노드 구조체 정의
+struct Node {
+    int level; // 현재 노드의 레벨 (물건의 인덱스)
+    int value; // 현재까지의 가치
+    int weight; // 현재까지의 무게
+    int included[MAX_ITEMS]; // 현재까지 선택된 물건을 나타내는 배열
+};
+
+// 전역 변수
+int max_value = 0;
+struct Node max_node; // 최적의 해를 담을 노드
+
+// 백트래킹 함수
+void knapsack(struct Item items[], int n, int capacity, struct Node current) {
+
+
+    // 기저 사례: 모든 물건을 확인한 경우
+    if (current.level == n) {
+        if (current.value > max_value) {
+            max_value = current.value;
+            max_node = current; // 최적의 해를 업데이트
+        }
+        return;
+    }
+
+    // 현재 물건을 선택한 경우
+    if (items[current.level].weight <= capacity) {
+        struct Node next = current;
+
+        next.level++;
+        next.value += items[current.level].value;
+        next.weight += items[current.level].weight;
+        next.included[current.level] = 1; // 해당 물건을 선택함을 표시
+        knapsack(items, n, capacity - items[current.level].weight, next);
+    }
+
+    // 현재 물건을 선택하지 않은 경우
+    struct Node next = current;
+    next.level++;
+    next.included[current.level] = 0; // 해당 물건을 선택하지 않음을 표시
+    knapsack(items, n, capacity, next);
+}
+
+int main() {
+    struct Item items[] = { {60, 10}, {100, 20}, {120, 30} }; // 각 물건의 가치와 무게
+    int capacity = 50; // 배낭의 용량
+    int n = sizeof(items) / sizeof(items[0]); // 물건의 개수
+
+    struct Node start = { 0, 0, 0 }; // 시작 노드
+    knapsack(items, n, capacity, start); // 백트래킹 함수 호출
+
+    printf("최대 가치: %d\n", max_value); // 최대 가치 출력
+    printf("선택된 물건:\n");
+    for (int i = 0; i < n; i++) {
+        if (max_node.included[i])
+            printf("물건 %d\n", i + 1);
+    }
+
+    return 0;
+}
