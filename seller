@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+#define INF 999999
+
+int N = 4;
+int dist[4][4] = {
+    {0, 20, 42, 25},
+    {20, 0, 30, 34},
+    {42, 30, 0, 10},
+    {25, 34, 10, 0}
+};
+
+int MinDistance() {
+    int minDistance = INF;
+
+    for (int start = 0; start < N; start++) {
+        for (int second = 0; second < N; second++) {
+            if (second == start) continue;
+            for (int third = 0; third < N; third++) {
+                if (third == start || third == second) continue;
+                for (int fourth = 0; fourth < N; fourth++) {
+                    if (fourth == start || fourth == second || fourth == third) continue;
+
+                    int currentDistance = dist[start][second] + dist[second][third] + dist[third][fourth] + dist[fourth][start];
+                    if (currentDistance < minDistance) {
+                        minDistance = currentDistance;
+                    }
+                }
+            }
+        }
+    }
+    return minDistance;
+}
+
+int main() {
+    int minDistance = MinDistance();
+    printf("최소 이동 비용: %d\n", minDistance);
+    return 0;
+}
